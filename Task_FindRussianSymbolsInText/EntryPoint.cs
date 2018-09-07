@@ -9,7 +9,6 @@ namespace Task_FindRussianSymbolsInText
             try
             {
                 var watcher = new FileWatcher();
-                watcher.Initialization();
             }
             catch(Exception ex)
             {

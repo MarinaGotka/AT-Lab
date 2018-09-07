@@ -16,12 +16,13 @@ namespace Task_FindRussianSymbolsInText
         public static readonly string infoFormatForFinding = ConfigurationManager.AppSettings["FormatForInfoRussianSymbols"];
         public static readonly string fileInfoFormat = ConfigurationManager.AppSettings["FormatFileInfo"];
         public static readonly string regexTemplate = ConfigurationManager.AppSettings["RegexTemplate"];
+        private readonly string culture = "ru-RU";
+        private readonly string backupDirectory;
         private Regex regex;
-        private string backupDirectory;
 
-        public void Initialization()
+        public FileWatcher()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("ru-RU");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
             regex = new Regex(regexTemplate);
             backupDirectory = Path.GetDirectoryName(backupPath);
             if ((backupDirectory != null) && (!Directory.Exists(backupDirectory)))
@@ -40,7 +41,7 @@ namespace Task_FindRussianSymbolsInText
             var files = directory.EnumerateFiles("*.*", SearchOption.TopDirectoryOnly).Where(x => ExtentionsList.extensions.Contains(x.Extension));
             foreach (FileInfo file in files)
             {
-                Console.WriteLine(fileInfoFormat, file.Name, file.Extension, file != null ? file.Length.ToString() : "");
+                Console.WriteLine(fileInfoFormat, file.Name, file.Extension, file != null ? file.Length.ToString() : throw new Exception("Error.File is null"));
                 var reader = file.OpenText();
                 var lineNumber = 1;
                 var newContentBuilder = new StringBuilder();
