@@ -15,13 +15,14 @@ namespace Task_FindRussianSymbolsInText
         public static readonly string path = ConfigurationManager.AppSettings["Path"];
         public static readonly string infoFormatForFinding = ConfigurationManager.AppSettings["FormatForInfoRussianSymbols"];
         public static readonly string fileInfoFormat = ConfigurationManager.AppSettings["FormatFileInfo"];
+        public static readonly string regexTemplate = ConfigurationManager.AppSettings["RegexTemplate"];
         private Regex regex;
         private string backupDirectory;
 
         public void Initialization()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("ru-RU");
-            regex = new Regex("[А-Яа-я]+");
+            regex = new Regex(regexTemplate);
             backupDirectory = Path.GetDirectoryName(backupPath);
             if ((backupDirectory != null) && (!Directory.Exists(backupDirectory)))
             {
@@ -118,21 +119,21 @@ namespace Task_FindRussianSymbolsInText
 		public void UpdateCurrentFileContent(string fullPath, StringBuilder content)
         {
 
-            FileInfo file2 = new FileInfo(fullPath);
-            var writer = file2.CreateText();
+            FileInfo newFile = new FileInfo(fullPath);
+            var writer = newFile.CreateText();
             writer.WriteLine(content.ToString());
             writer.Close();
         }
 
         /// <summary>
-		/// Метод для замены символа на аналог английской буквы.
+		/// Метод для замены символа на аналог английской буквы с сохранением регистра.
 		/// <param name="s">Строка с одним символом</param>
 		/// <returns></returns>
 		public char ReplaceCharacter(char s)
         {
-            var v = char.GetUnicodeCategory(s);
-            var ctmp = Replacer(char.ToLower(s));
-            return char.GetUnicodeCategory(ctmp) != v ? char.ToUpper(ctmp) : ctmp;
+            var category = char.GetUnicodeCategory(s);
+            var newChar = Replace(char.ToLower(s));
+            return char.GetUnicodeCategory(newChar) != category ? char.ToUpper(newChar) : newChar;
         }
 
         /// <summary>
@@ -140,7 +141,7 @@ namespace Task_FindRussianSymbolsInText
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public char Replacer(char value)
+		public char Replace(char value)
         {
             switch (value)
             {
@@ -150,10 +151,15 @@ namespace Task_FindRussianSymbolsInText
                 case 'д': return 'd';
                 case 'ж': return 'j';
                 case 'з': return 'z';
+                case 'и': return 'i';
+                case 'л': return 'l';
                 case 'м': return 'm';
                 case 'н': return 'n';
+                case 'п': return 'p';
                 case 'р': return 'r';
+                case 'с': return 's';
                 case 'т': return 't';
+                case 'у': return 'u';
                 default:
                     return value;
             }
