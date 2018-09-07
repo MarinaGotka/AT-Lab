@@ -21,7 +21,7 @@ namespace Task_FindRussianSymbolsInText
         public void Initialization()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("ru-RU");
-            regex = new Regex("[а-яА-Я]");
+            regex = new Regex("[А-Яа-я]+");
             backupDirectory = Path.GetDirectoryName(backupPath);
             if ((backupDirectory != null) && (!Directory.Exists(backupDirectory)))
             {
@@ -30,6 +30,9 @@ namespace Task_FindRussianSymbolsInText
             ReadFile();
         }
 
+        /// <summary>
+        /// Метод для чтения текста из файла и замены русских символов на английские.
+        /// </summary>
         public void ReadFile()
         {
             var directory = new DirectoryInfo(path);
@@ -43,16 +46,15 @@ namespace Task_FindRussianSymbolsInText
                 while (!reader.EndOfStream)
                 {
                     var line = new StringBuilder(reader.ReadLine());
-
                     Console.WriteLine(line);
                     Match match = regex.Match(line.ToString());
 
                     while (match.Success)
                     {
-                        Console.WriteLine(infoFormatForFinding, lineNumber, match.Index, match.Value);
-                        if (match.Value.Length == 1)
+                       Console.WriteLine(infoFormatForFinding, lineNumber, match.Index, match.Value);
+                       for(int i = 0; i< match.Value.Length; i++)
                         {
-                            line[match.Index] = ReplaceCharacter(match.Value[0]);
+                            line[match.Index + i] = ReplaceCharacter(match.Value[i]);
                         }
                         match = match.NextMatch();
                     }
@@ -60,7 +62,6 @@ namespace Task_FindRussianSymbolsInText
                     newContentBuilder.AppendLine(line.ToString());
                 }
                 reader.Close();
-                Console.WriteLine(Thread.CurrentThread.CurrentCulture);
 
                 Console.WriteLine("Readed: {0} lines", lineNumber - 1);
                 Console.WriteLine("Result after all changes is : ");
@@ -69,6 +70,11 @@ namespace Task_FindRussianSymbolsInText
             }
         }
 
+        /// <summary>
+        /// Метод для получения разрешения от пользователя на сохранение изменений в файле.
+        /// </summary>
+        /// <param name="file"> файл </param>
+        /// <param name="content"> измененное содержимое </param>
         public void Save(FileInfo file, StringBuilder content)
         {
             Console.WriteLine("Do you wanna replace your file with new content? Y/N");
@@ -87,10 +93,10 @@ namespace Task_FindRussianSymbolsInText
 
                     break;
                 }
-                Console.WriteLine("Try again (Hint: use Y or N)");
+                Console.WriteLine("Error! Input Y or N.");
                 answer = Console.ReadKey();
             }
-            Console.WriteLine(Environment.NewLine + "Done");
+            Console.WriteLine(Environment.NewLine + "Save is done.");
         }
 
         /// <summary>
