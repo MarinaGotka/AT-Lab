@@ -2,13 +2,13 @@
 
 namespace Task_FindRussianSymbolsInText
 {
-    class EntryPoint
+    public class EntryPoint
     {
         static void Main(string[] args)
         {
             try
             {
-                FileWatcher watcher = new FileWatcher();
+                var watcher = new FileWatcher();
                 watcher.Initialization();
             }
             catch(Exception ex)

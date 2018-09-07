@@ -10,9 +10,9 @@ namespace Task_FindRussianSymbolsInText
     {
         public static List<string> extensions = new List<string>()
         {
-            "txt",
-            "rtf",
-            "log"
+            ".txt",
+            ".rtf",
+            ".log"
         };
 }
 }
